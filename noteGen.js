@@ -1,10 +1,11 @@
-const notes = ["A","B","C","D","E","F","G"];
 const options = {
     speedOptions: [
         {id: "slowSpeed", name:"slow", speed: 6000, selected: false}, 
         {id: "mediumSpeed", name:"medium", speed: 3000, selected: true}, 
         {id: "fastSpeed", name:"fast", speed: 1500, selected: false}
     ],
+    notes : [{note: "A", selected: true}, {note: "B", selected: true}, {note: "C", selected: true}, {note: "D", selected: true}, {note: "E", selected: true}, {note: "F", selected: true}, {note: "G", selected: true}],
+
     quality: {selected: false, values: ["m", "M"]},
     
     alterations: {selected: false, values: ["","#","b"]}
@@ -69,14 +70,15 @@ getQuality = function() {
 
 
 randomNote = function() {
-    let index = Math.floor(Math.random() * Math.floor(notes.length));
-    return notes[index];
+    let index = Math.floor(Math.random() * Math.floor(options.notes.length));
+    return options.notes[index].note;
 };
 
 //OPTIONS 
 
 createOptionsPage = function() {
     let speedContainer = document.getElementById("speedContainer");
+    let notesContainer
     let alterations = document.getElementById("alterations");
     let quality = document.getElementById("quality");
 
@@ -89,12 +91,27 @@ createOptionsPage = function() {
             selectSpeed(speedItem);
         });
 
-        let text = document.createElement("p");
-        text.innerHTML = speedElmt.name.toUpperCase();
+        let speedText = document.createElement("p");
+        speedText.innerHTML = speedElmt.name.toUpperCase();
 
-        speedItem.appendChild(text);
+        speedItem.appendChild(speedText);
         speedContainer.appendChild(speedItem);
     });
+
+    //NOTES
+    options.notes.forEach((note) => {
+        let noteItem = document.createElement("span");
+        noteItem.className = "item noteItem";
+        noteItem.addEventListener("click", () => {
+            selectNote(speedItem);
+        });
+
+        let noteText = document.createElement("p");
+        noteText.innerHTML = note.note;
+
+        noteItem.appendChild(noteText);
+        speedContainer.appendChild(noteItem);
+    })
 
     //QUALITY
     quality.addEventListener("click", handleQuality);

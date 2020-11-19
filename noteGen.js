@@ -5,9 +5,8 @@ const options = {
         {id: "fastSpeed", name:"fast", speed: 1500, selected: false}
     ],
     notes : [{note: "A", selected: true}, {note: "B", selected: true}, {note: "C", selected: true}, {note: "D", selected: true}, {note: "E", selected: true}, {note: "F", selected: true}, {note: "G", selected: true}],
-
+    notesToDisplay: [],
     quality: {selected: false, values: ["m", "M"]},
-    
     alterations: {selected: false, values: ["","#","b"]}
 };
 
@@ -40,11 +39,23 @@ initDisplay = function() {;
     let speedIndex = options.speedOptions.findIndex(elm => elm.selected);
     document.getElementsByClassName("speedItem")[speedIndex].classList.add("selected");
 
+    for(i=0; i<options.notes.length; i++) {
+        if(options.notes[i].selected) {
+            document.getElementsByClassName("noteItem")[i].classList.add("selected");
+        }
+    }
+
     startDisplay();
 };
 
 startDisplay = function() {
     let speed = options.speedOptions.find(elmt => elmt.selected).speed;
+    options.notesToDisplay = [];
+    options.notes.forEach(note => {
+        if(note.selected) {
+            options.notesToDisplay.push(note.note)
+        }
+    })
 
     displayNewNote();
     displayInterval = setInterval(displayNewNote, speed);
@@ -70,15 +81,15 @@ getQuality = function() {
 
 
 randomNote = function() {
-    let index = Math.floor(Math.random() * Math.floor(options.notes.length));
-    return options.notes[index].note;
+    let index = Math.floor(Math.random() * Math.floor(options.notesToDisplay.length));
+    return options.notesToDisplay[index];
 };
 
 //OPTIONS 
 
 createOptionsPage = function() {
     let speedContainer = document.getElementById("speedContainer");
-    let notesContainer
+    let notesContainer = document.getElementById("notesContainer");
     let alterations = document.getElementById("alterations");
     let quality = document.getElementById("quality");
 
@@ -101,16 +112,17 @@ createOptionsPage = function() {
     //NOTES
     options.notes.forEach((note) => {
         let noteItem = document.createElement("span");
+        noteItem.id = note.note;
         noteItem.className = "item noteItem";
         noteItem.addEventListener("click", () => {
-            selectNote(speedItem);
+            selectNote(noteItem);
         });
 
         let noteText = document.createElement("p");
         noteText.innerHTML = note.note;
 
         noteItem.appendChild(noteText);
-        speedContainer.appendChild(noteItem);
+        notesContainer.appendChild(noteItem);
     })
 
     //QUALITY
@@ -148,12 +160,28 @@ selectSpeed = function(item) {
     }
 };
 
+selectNote = function(item) {
+    let notesDisplayedElmts = document.getElementsByClassName("noteItem");
+
+    let noteToSwitch = options.notes.find(note => note.note === item.id);
+    noteToSwitch.selected = !noteToSwitch.selected;
+
+    for(i=0; i < options.notes.length; i++) {
+        if (options.notes[i].selected) {
+            notesDisplayedElmts[i].classList.add("selected")
+        } else {
+            notesDisplayedElmts[i].classList.remove("selected")
+        }
+    }
+
+};
+
 handleAlterations = function() {
     options.alterations.selected = !options.alterations.selected;
     document.getElementById("alterations").classList.toggle("selected");
-}
+};
 
 handleQuality = function() {
     options.quality.selected = !options.quality.selected;
     document.getElementById("quality").classList.toggle("selected");
-}
+};

@@ -4,8 +4,9 @@ const options = {
         {id: "mediumSpeed", name:"medium", speed: 3000, selected: true}, 
         {id: "fastSpeed", name:"fast", speed: 1500, selected: false}
     ],
-    notes : [{note: "A", selected: true}, {note: "B", selected: true}, {note: "C", selected: true}, {note: "D", selected: true}, {note: "E", selected: true}, {note: "F", selected: true}, {note: "G", selected: true}],
+    notes : [{noteUS: "A", noteEU: "LA", selected: true}, {noteUS: "B", noteEU: "SI", selected: true}, {noteUS: "C", noteEU: "DO",selected: true}, {noteUS: "D", noteEU: "RE", selected: true}, {noteUS: "E", noteEU: "MI", selected: true}, {noteUS: "F", noteEU: "FA", selected: true}, {noteUS: "G", noteEU: "SOL", selected: true}],
     notesToDisplay: [],
+    languageUS: true,
     quality: {selected: false, values: ["m", "M"]},
     alterations: {selected: false, values: ["","#","b"]}
 };
@@ -44,7 +45,7 @@ initDisplay = function() {;
             document.getElementsByClassName("noteItem")[i].classList.add("selected");
         }
     }
-
+    document.getElementById("US").classList.add("langSelected");
     startDisplay();
 };
 
@@ -53,7 +54,7 @@ startDisplay = function() {
     options.notesToDisplay = [];
     options.notes.forEach(note => {
         if(note.selected) {
-            options.notesToDisplay.push(note.note)
+            options.notesToDisplay.push(options.languageUS ? note.noteUS : note.noteEU);
         }
     })
 
@@ -92,6 +93,7 @@ createOptionsPage = function() {
     let notesContainer = document.getElementById("notesContainer");
     let alterations = document.getElementById("alterations");
     let quality = document.getElementById("quality");
+    let language = document.getElementById("language");
 
     // SPEED
     options.speedOptions.forEach((speedElmt) => {
@@ -112,18 +114,21 @@ createOptionsPage = function() {
     //NOTES
     options.notes.forEach((note) => {
         let noteItem = document.createElement("span");
-        noteItem.id = note.note;
+        noteItem.id = note.noteUS;
         noteItem.className = "item noteItem";
         noteItem.addEventListener("click", () => {
             selectNote(noteItem);
         });
 
         let noteText = document.createElement("p");
-        noteText.innerHTML = note.note;
+        noteText.innerHTML = note.noteUS;
 
         noteItem.appendChild(noteText);
         notesContainer.appendChild(noteItem);
     })
+
+    // LANGUAGE
+    language.addEventListener("click", handleLanguage);
 
     //QUALITY
     quality.addEventListener("click", handleQuality);
@@ -163,7 +168,7 @@ selectSpeed = function(item) {
 selectNote = function(item) {
     let notesDisplayedElmts = document.getElementsByClassName("noteItem");
 
-    let noteToSwitch = options.notes.find(note => note.note === item.id);
+    let noteToSwitch = options.notes.find(note => note.noteUS === item.id);
     noteToSwitch.selected = !noteToSwitch.selected;
 
     for(i=0; i < options.notes.length; i++) {
@@ -174,6 +179,18 @@ selectNote = function(item) {
         }
     }
 
+};
+
+handleLanguage = function() {
+    let notesDisplayedElmts = document.getElementsByClassName("noteItem");
+
+    options.languageUS = !options.languageUS;
+    document.getElementById("US").classList.toggle("langSelected");
+    document.getElementById("EU").classList.toggle("langSelected");
+
+    for(i=0; i<notesDisplayedElmts.length; i++) {
+        notesDisplayedElmts[i].innerHTML = options.languageUS ? options.notes[i].noteUS : options.notes[i].noteEU;
+    }
 };
 
 handleAlterations = function() {

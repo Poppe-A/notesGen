@@ -110,13 +110,16 @@ body {
     width: 7%;
 }
 
-#quality {
+#otherOptions {
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
 
-
+.langSelected {
+    color: white;
+}
 #validButton {
     width: 300px;
     text-align: center;

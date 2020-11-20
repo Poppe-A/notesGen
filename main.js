@@ -22,17 +22,6 @@ activateOptionsPage = function() {
     clearInterval(displayInterval);
     startSpeedBlink();
     getOptionsPage().classList.remove("hidden");
-
-    window.addEventListener('click', function(e){   
-        if (getOptionsPage().contains(e.target)){
-          // Clicked in box
-          console.log("aaaaa")
-
-        } else{
-            console.log("zefg")
-        //   closeActivationPage();
-        }
-      });
 };
 
 closeActivationPage = function() {

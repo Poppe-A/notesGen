@@ -57,8 +57,11 @@ createOptionsPage = function() {
 };
 
 startSpeedBlink = function() {
+    let indicator = document.getElementById("speedIndicator");
+    indicator.innerHTML = Math.round(60000/options.speed) + " bpm";
+
     speedBlink();
-    speedBlinkInterval = setInterval(speedBlink, options.speed)
+    speedBlinkInterval = setInterval(speedBlink, options.speed);
 };
 
 stopSpeedBlink = function() {

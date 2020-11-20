@@ -14,6 +14,16 @@
         height: 100%;
     }
 
+    #speedContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #speedSelector {
+        margin: 10px 0 10px 0;
+    }
+
     .item {
         width: 23%;
         font-size: 0.7em;

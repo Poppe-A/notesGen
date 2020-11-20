@@ -1,9 +1,11 @@
+Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+    return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
+
 const options = {
-    speedOptions: [
-        {id: "slowSpeed", name:"slow", speed: 6000, selected: false}, 
-        {id: "mediumSpeed", name:"medium", speed: 3000, selected: true}, 
-        {id: "fastSpeed", name:"fast", speed: 1500, selected: false}
-    ],
+    speedRange:{slow: 10000, fast: 1000},
+    initSpeed: 5000,
+    speed: null,
     notes : [{noteUS: "A", noteEU: "LA", selected: true}, {noteUS: "B", noteEU: "SI", selected: true}, {noteUS: "C", noteEU: "DO",selected: true}, {noteUS: "D", noteEU: "RE", selected: true}, {noteUS: "E", noteEU: "MI", selected: true}, {noteUS: "F", noteEU: "FA", selected: true}, {noteUS: "G", noteEU: "SOL", selected: true}],
     notesToDisplay: [],
     languageUS: true,
@@ -12,6 +14,7 @@ const options = {
 };
 
 let displayInterval;
+let speedBlinkInterval;
 
 window.onload = function() {
     prepareScreen();
@@ -28,18 +31,20 @@ prepareScreen = function() {
 
 activateOptionsPage = function() {
     clearInterval(displayInterval);
+    startSpeedBlink();
     document.getElementById("optionsPage").classList.remove("hidden");
 };
 
 closeActivationPage = function() {
     document.getElementById("optionsPage").classList.add("hidden");
+    stopSpeedBlink();
     startDisplay()
 };
 
 initDisplay = function() {;
-    let speedIndex = options.speedOptions.findIndex(elm => elm.selected);
-    document.getElementsByClassName("speedItem")[speedIndex].classList.add("selected");
-
+    // let speedIndex = options.speedOptions.findIndex(elm => elm.selected);
+    // document.getElementsByClassName("speedItem")[speedIndex].classList.add("selected");
+    options.speed = options.initSpeed;
     for(i=0; i<options.notes.length; i++) {
         if(options.notes[i].selected) {
             document.getElementsByClassName("noteItem")[i].classList.add("selected");
@@ -50,7 +55,6 @@ initDisplay = function() {;
 };
 
 startDisplay = function() {
-    let speed = options.speedOptions.find(elmt => elmt.selected).speed;
     options.notesToDisplay = [];
     options.notes.forEach(note => {
         if(note.selected) {
@@ -59,7 +63,7 @@ startDisplay = function() {
     })
 
     displayNewNote();
-    displayInterval = setInterval(displayNewNote, speed);
+    displayInterval = setInterval(displayNewNote, options.speed);
 };
 
 displayNewNote = function() {
@@ -89,27 +93,26 @@ randomNote = function() {
 //OPTIONS 
 
 createOptionsPage = function() {
-    let speedContainer = document.getElementById("speedContainer");
+    
+
+    let speedSelector = document.getElementById("speedSelector");
     let notesContainer = document.getElementById("notesContainer");
     let alterations = document.getElementById("alterations");
     let quality = document.getElementById("quality");
     let language = document.getElementById("language");
 
     // SPEED
-    options.speedOptions.forEach((speedElmt) => {
-        let speedItem = document.createElement("span");
-        speedItem.className = "item speedItem";
-        speedItem.id = speedElmt.id;
-        speedItem.addEventListener("click", () => {
-            selectSpeed(speedItem);
-        });
+    speedSelector.addEventListener("change", speedChange);
+    // options.speedOptions.forEach((speedElmt) => {
+    //     let speedItem = document.createElement("span");
+    //     speedItem.className = "item speedItem";
+    //     speedItem.id = speedElmt.id;
+    //     speedItem.addEventListener("click", () => {
+    //         selectSpeed(speedItem);
+    //     });
 
-        let speedText = document.createElement("p");
-        speedText.innerHTML = speedElmt.name.toUpperCase();
-
-        speedItem.appendChild(speedText);
-        speedContainer.appendChild(speedItem);
-    });
+    //     speedContainer.appendChild(speedItem);
+    // });
 
     //NOTES
     options.notes.forEach((note) => {
@@ -147,23 +150,31 @@ createOptionsPage = function() {
     }
 };
 
-
-selectSpeed = function(item) {
-    let speedDisplayedElmts = document.getElementsByClassName("speedItem");
-
-    for(speed of options.speedOptions) {
-        speed.selected = speed.id === item.id ? true : false;
-    }
-
-    for(i=0; i < options.speedOptions.length; i++) {
-        if (options.speedOptions[i].selected) {
-            speedDisplayedElmts[i].classList.add("selected")
-        } else {
-            speedDisplayedElmts[i].classList.remove("selected")
-
-        }
-    }
+startSpeedBlink = function() {
+    speedBlinkInterval = setInterval(speedBlink, options.speed)
 };
+
+speedBlink = function() {
+    console.log("blink")
+    let speedSelector = document.getElementById("speedSelector");
+    speedSelector.classList.add("blink");
+
+    setTimeout(() => {
+    speedSelector.classList.remove("blink");
+    }, 100);
+}
+
+stopSpeedBlink = function() {
+    clearInterval(speedBlinkInterval);
+}
+
+speedChange = function(e) {
+    let speed = parseInt(e.target.value);
+    options.speed = speed.map(0,100,6000,1000);
+    stopSpeedBlink();
+    startSpeedBlink();
+};
+
 
 selectNote = function(item) {
     let notesDisplayedElmts = document.getElementsByClassName("noteItem");

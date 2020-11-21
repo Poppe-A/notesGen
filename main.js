@@ -9,6 +9,24 @@ window.onload = function() {
 getOptionsPage = () => document.getElementById("optionsPage");
 const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
 
+getAlteration = function() {
+    let alterOptions = options.alterations;
+    let alteration = alterOptions.values[Math.floor(Math.random() * alterOptions.values.length)];
+    return alterOptions.selected ?  alteration : alterOptions.values[0];
+},
+
+getQuality = function() {
+    let qualityOptions = options.quality;
+    let quality = qualityOptions.values[Math.floor(Math.random() * qualityOptions.values.length)];
+    return qualityOptions.selected ? quality : "";
+}
+
+
+randomNote = function() {
+    let index = Math.floor(Math.random() * Math.floor(options.notesToDisplay.length));
+    return options.notesToDisplay[index];
+};
+
 //MAIN SCREEN
 prepareScreen = function() {
     createOptionsPage();
@@ -56,26 +74,19 @@ displayNewNote = function() {
     let noteDisplay = document.getElementById("noteDisplay");
     let alterationDisplay = document.getElementById("alterationDisplay");
     let qualityDisplay = document.getElementById("qualityDisplay");
-    
-    noteDisplay.innerHTML = randomNote();
-    alterationDisplay.innerHTML = getAlteration();
-    qualityDisplay.innerHTML = " " + getQuality();
+
+    let note = randomNote();
+    let randomAlteration = getAlteration();
+    let randomQuality = getQuality();
+
+    if (this.lastNote === note+randomAlteration+randomQuality) {
+        displayNewNote();
+    } else {
+        noteDisplay.innerHTML = note;
+        alterationDisplay.innerHTML = randomAlteration;
+        qualityDisplay.innerHTML = " " + randomQuality;
+        this.lastNote = note+randomAlteration+randomQuality;
+    }
 };
 
-getAlteration = function() {
-    let alterOptions = options.alterations;
-    let alteration = alterOptions.values[Math.floor(Math.random() * alterOptions.values.length)];
-    return alterOptions.selected ?  alteration : alterOptions.values[0];
-},
 
-getQuality = function() {
-    let qualityOptions = options.quality;
-    let quality = qualityOptions.values[Math.floor(Math.random() * qualityOptions.values.length)];
-    return qualityOptions.selected ? quality : "";
-}
-
-
-randomNote = function() {
-    let index = Math.floor(Math.random() * Math.floor(options.notesToDisplay.length));
-    return options.notesToDisplay[index];
-};
